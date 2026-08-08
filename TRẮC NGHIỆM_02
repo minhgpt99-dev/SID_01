@@ -1,0 +1,46 @@
+10 Câu hỏi trắc nghiệm tự kiểm tra (Buổi 2)
+
+Câu 1
+Theo Buổi 2, Prompt nên được hiểu đúng nhất là gì?
+C. Giao diện ngôn ngữ giúp con người giao tiếp và điều khiển AI thực hiện một nhiệm vụ.
+
+Câu 2
+Prompt Engineering được hiểu đúng nhất là:
+B. Thiết kế, kiểm tra và cải tiến prompt để AI hiểu đúng nhiệm vụ và tạo ra output phù hợp.
+
+Câu 3
+Trong RTC-COE, thành phần nào giúp xác định AI cần tạo ra artifact gì?
+C. Output
+
+Câu 4
+Đâu là ví dụ đúng của phần Output trong RTC-COE?
+C. Tạo bảng so sánh gồm 5 tiêu chí và đưa ra khuyến nghị cuối cùng.
+
+Câu 5
+Sau khi đã viết đầy đủ RTC-COE, tại sao đôi khi vẫn chưa nên dùng ngay một prompt duy nhất?
+B. Vì prompt đã đúng cấu trúc nhưng có thể đang chứa quá nhiều nhiệm vụ nhận thức.
+
+Câu 6
+Task Decomposition có mục đích chính là gì?
+B. Chia bài toán thành các nhiệm vụ nhỏ có quan hệ logic và thứ tự thực hiện rõ ràng.
+
+Câu 7
+Dấu hiệu nào dưới đây cho thấy một yêu cầu nên được Task Decomposition?
+B. Có nhiều artifact độc lập và output của bước trước là input của bước sau.
+
+Câu 8
+Phát biểu nào sau đây đúng nhất về Prompt Stack?
+B. Prompt Stack là chuỗi nhiều prompt được xây dựng từ Task Decomposition; các bước có thể thay đổi tùy bài toán.
+
+Câu 9
+Trong Prompt Stack, mối quan hệ giữa RTC-COE và Prompt Stack là gì?
+C. Mỗi prompt trong Prompt Stack vẫn nên được thiết kế bằng RTC-COE.
+
+Câu 10
+Thứ tự nào dưới đây phản ánh đúng quy trình của Buổi 2?
+B. Prompt → Prompt Engineering → RTC-COE → Task Decomposition → Prompt Stack
+
+
+
+
+
