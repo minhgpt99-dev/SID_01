@@ -1,0 +1,577 @@
+# DECOMPOSITION PACKAGE — AI FINANCIAL INTELLIGENCE COACH
+
+## 1. Framing Summary
+
+Project xây dựng **AI Financial Intelligence Coach** nhằm hỗ trợ người dùng quản lý tài chính cá nhân và hỗ trợ ra quyết định đầu tư. Đối tượng chính gồm nhà đầu tư cá nhân, chủ doanh nghiệp nhỏ, người đã tích lũy tài sản và người muốn sử dụng AI như một trợ lý tài chính. fileciteturn3file0L10-L26
+
+Phạm vi được xác định gồm quản lý dòng tiền, tài sản, nợ, danh mục đầu tư, risk assessment, asset allocation, đọc/hiểu báo cáo quỹ, so sánh quỹ và hỗ trợ ra quyết định nhưng không thay thế người dùng. Bài 1 đồng thời đưa `Investment Journal` vào In-Scope. fileciteturn3file0L13-L34
+
+Bài 2 triển khai logic xử lý thành chuỗi cognitive task P0–P7, từ clarification → framing → structuring → risk → investment analysis → comparison → decision support → independent validation/release. fileciteturn3file2L119-L149
+
+Hệ thống bị ràng buộc bởi evidence provenance, uncertainty labeling và các boundary như không dự đoán giá cổ phiếu, không cam kết lợi nhuận, không tạo tín hiệu mua/bán ngắn hạn và không tư vấn pháp lý/thuế chuyên sâu. fileciteturn3file2L155-L203
+
+---
+
+# 2. Source Normalization
+
+| Field | Nội dung chuẩn hóa | Source |
+|---|---|---|
+| Topic | Quản lý tài chính cá nhân và hỗ trợ quyết định đầu tư bằng AI | Framing |
+| Problem | Xây AI Financial Intelligence Coach hỗ trợ quản lý vòng đời tài chính cá nhân | Framing |
+| Audience | Nhà đầu tư cá nhân; chủ doanh nghiệp nhỏ; người tích lũy tài sản; người muốn AI làm trợ lý tài chính | Framing |
+| Goal | Financial Coach dùng hàng ngày + hỗ trợ phân tích/ra quyết định; không phải chatbot kiến thức đơn thuần | Framing + RTC–COE |
+| Context | **Không có field Context riêng trong Bài 1**; bối cảnh chỉ được thể hiện thông qua Problem, Audience và use case | Framing |
+| In-Scope | Cash flow; personal finance; assets; debt; portfolio; asset allocation; risk; fund analysis/comparison; Investment Journal; decision support | Framing + RTC–COE |
+| Out-of-Scope | Dự đoán giá cổ phiếu; cam kết lợi nhuận; tín hiệu mua/bán ngắn hạn; tư vấn pháp lý/thuế chuyên sâu | Framing + RTC–COE |
+| Constraints | Chỉ dùng dữ liệu người dùng hoặc nguồn chính thống có thể truy xuất; không thay thế chuyên gia/người dùng | Framing + RTC–COE |
+| Main capabilities | Financial framing; financial-state structuring; risk analysis; investment research; comparison; decision support; validation | RTC–COE |
+| Cognitive tasks | P0–P7 | RTC–COE |
+| Artifacts | A0 User Input → A1–A7 → A8 Final Decision Support Brief | RTC–COE |
+| Checkpoints | CP0–CP7 | RTC–COE |
+| Boundaries | Evidence traceability; uncertainty visibility; no prediction/guarantee/trading command; licensed-professional boundary | RTC–COE |
+
+Bài 2 xác định A0–A8 với dependency rõ ràng giữa các artifact. fileciteturn3file2L207-L235
+
+---
+
+# 3. Decomposition Strategy
+
+### Level-1 criterion
+
+**Các miền tri thức mà AI Financial Intelligence Coach phải biết và hiểu để thực hiện đúng phạm vi.**
+
+Đây là tiêu chí **knowledge-domain**, không phải workflow.
+
+### Rationale
+
+Bài 3 yêu cầu Top-down bắt đầu từ một chủ đề tổng, chia thành 3–7 miền chính theo cùng một tiêu chí và tránh đặt các node khác loại cùng cấp. fileciteturn3file4L1027-L1051
+
+Vì vậy P0–P7 **không được dùng làm Level 1 của Domain Tree**. P0–P7 thuộc Functional Decomposition vì chúng trả lời câu hỏi hệ thống phải xử lý input → output như thế nào. Functional decomposition trong Bài 3 được định nghĩa chính xác theo logic này. fileciteturn3file4L1073-L1103
+
+### Important assumptions
+
+- `Cash flow tracking` và `CashFlow` trong Framing được normalize thành cùng một requirement.
+- `Personal Finance` được xem là umbrella domain, không tạo một capability riêng trùng toàn bộ các nhánh khác.
+- Không tự suy diễn cấu trúc chi tiết cho `Investment Journal`.
+- Stakeholder chưa được Bài 1–2 mô tả đầy đủ sẽ mang nhãn `PROPOSED`.
+
+### Conflicts / Missing Information
+
+**GAP-01 — Investment Journal**
+
+`Investment Journal` xuất hiện trong In-Scope của Bài 1. fileciteturn3file0L27-L34
+
+Nhưng P0–P7/A1–A8 hiện chưa có cognitive task/artifact riêng thể hiện rõ journal workflow.
+
+→ Giữ requirement trong Domain Tree.
+
+→ Không tự tạo P8/A9.
+
+→ Functional coverage = `PARTIAL`.
+
+---
+
+# 4. Domain Tree
+
+```text
+L0. AI FINANCIAL INTELLIGENCE COACH — KNOWLEDGE DOMAIN
+
+  L1.1 Financial Situation & Decision Context
+      L2.1 User financial profile
+      L2.2 Financial goals
+          L3.1 Primary financial goal
+          L3.2 Time horizon
+      L2.3 Decision context
+          L3.1 Decision to support
+          L3.2 Options being considered
+      L2.4 Financial constraints
+      L2.5 Available financial data
+      L2.6 Missing critical information
+
+  L1.2 Cash Flow & Liquidity
+      L2.1 Cash inflows
+      L2.2 Fixed outflows
+      L2.3 Variable outflows
+      L2.4 Net cash flow
+      L2.5 Liquidity position
+      L2.6 Units, dates and data consistency
+
+  L1.3 Assets & Liabilities
+      L2.1 Asset inventory
+          L3.1 Asset type
+          L3.2 Asset value
+          L3.3 Valuation source
+          L3.4 Valuation date
+      L2.2 Liability inventory
+          L3.1 Outstanding balance
+          L3.2 Cost of capital
+          L3.3 Maturity
+      L2.3 Debt position
+      L2.4 Duplicate / inconsistent records
+      L2.5 Stale or missing valuation data
+
+  L1.4 Portfolio & Asset Allocation
+      L2.1 Investment portfolio
+      L2.2 Portfolio holdings information
+      L2.3 Asset allocation
+      L2.4 Portfolio relationship with financial goals
+      L2.5 Investment Journal
+            [FRAMING SOURCE ONLY — FUNCTIONAL GAP]
+
+  L1.5 Investment & Fund Intelligence
+      L2.1 Investment / fund identity & source register
+      L2.2 Objective, strategy & portfolio characteristics
+      L2.3 Historical performance
+          L3.1 Reporting period
+          L3.2 As-of date
+      L2.4 Fees, costs & liquidity conditions
+      L2.5 Material investment risks & goal relevance
+      L2.6 Comparative analysis
+          L3.1 Common comparison criteria
+          L3.2 Weighting
+          L3.3 Comparability
+          L3.4 Trade-offs
+          L3.5 Goal fit
+          L3.6 Non-comparable fields
+
+  L1.6 Financial Risk & Goal Feasibility
+      L2.1 Risk capacity
+      L2.2 Risk tolerance
+      L2.3 Risk required
+      L2.4 Financial risk dimensions
+          L3.1 Liquidity risk
+          L3.2 Cash-flow risk
+          L3.3 Debt / leverage risk
+          L3.4 Concentration risk
+          L3.5 Time-horizon risk
+      L2.5 Goal feasibility tensions
+      L2.6 Assumption, sensitivity & uncertainty
+
+  L1.7 Evidence, Uncertainty & Decision Boundary
+      L2.1 Evidence classification
+          L3.1 FACT_USER
+          L3.2 FACT_SOURCE
+          L3.3 DERIVED
+          L3.4 ASSUMPTION
+          L3.5 MISSING
+          L3.6 NOT_APPLICABLE
+      L2.2 Source provenance
+      L2.3 Confidence
+          L3.1 HIGH
+          L3.2 MEDIUM
+          L3.3 LOW
+      L2.4 Decision-support boundary
+      L2.5 Prohibited outputs
+          L3.1 Stock-price prediction
+          L3.2 Guaranteed returns
+          L3.3 Short-term buy/sell signal
+          L3.4 Deep legal/tax advice
+      L2.6 Validation & release criteria
+```
+
+Các node L1.1–L1.4 chủ yếu được rút từ A1/A2, trong đó A2 bao gồm cash inflow/outflow, assets, liabilities, liquidity, portfolio và asset allocation. fileciteturn3file2L437-L463
+
+L1.6 bám trực tiếp cấu trúc A3: risk capacity, tolerance, required, liquidity/cash-flow/debt/concentration/time-horizon risk và goal feasibility. fileciteturn3file2L519-L550
+
+L1.5 bám vào A4/A5, bao gồm strategy, performance period, cost, liquidity, risk, comparison criteria, weighting, trade-offs và goal fit. fileciteturn3file3L586-L651 fileciteturn3file3L674-L735
+
+**Level-1 decomposition criterion:** knowledge domain.
+
+**Why this criterion:** Domain Tree trả lời **“AI cần biết gì?”**, trong khi workflow ở phần sau trả lời **“AI cần làm gì?”**. Việc tách hai loại này tránh lỗi cùng cấp nhưng khác loại được cảnh báo trong Bài 3.
+
+---
+
+# 5. Functional Map
+
+## 5.1 Main Workflow
+
+```text
+USER REQUEST + FINANCIAL DATA + AVAILABLE SOURCES
+                     │
+                     ▼
+F1 — Orchestrate & Clarify
+[P0]
+                     │
+                     ▼
+F2 — Frame Financial Situation
+[P1 → A1]
+                     │
+                 CP1 Gate
+                     ▼
+F3 — Structure Financial State
+[P2 → A2]
+                     │
+                 CP2 Gate
+                     ▼
+F4 — Assess Financial Risk
+[P3 → A3]
+                     │
+                 CP3 Gate
+                     ▼
+        ┌────────────────────────┐
+        │ Investment analysis?   │
+        └────────────┬───────────┘
+               YES  │      NO
+                    ▼       ──────────┐
+F5 — Analyze Investments             │
+[P4 → A4]                            │
+                    │                │
+                 CP4                 │
+                    ▼                │
+        Comparison required?         │
+           │ YES       │ NO          │
+           ▼           │             │
+F6 — Compare Options  │             │
+[P5 → A5]            │             │
+           │           │             │
+           └───────────┴─────────────┘
+                       ▼
+F7 — Draft Decision Support
+[P6 → A6]
+                       │
+                    CP6 Gate
+                       ▼
+F8 — Independent Validation / Red-Team
+[P7 → A7]
+                       │
+                 RELEASE GATE
+                  ┌────┴─────┐
+                  ▼          ▼
+                A8          BLOCK /
+        Final Decision      REVISE /
+        Support Brief       NEEDS_INPUT
+```
+
+Đây là workflow được Bài 2 xác định rõ, bao gồm cả hai nhánh P4 và P5 có thể `NOT_APPLICABLE`. fileciteturn3file2L131-L149
+
+## 5.2 Function Table
+
+| Function | Input | Transformation | Output | Dependency |
+|---|---|---|---|---|
+| F1 Orchestrate & Clarify | User request, data, sources | Xác định goal, task, missing input, route | Orchestration Plan | Start |
+| F2 Financial Framing | A0 + Plan | Chuẩn hóa goal, decision, horizon, scope, missing data | A1 | F1 |
+| F3 Financial State Structuring | A1 + raw data | Cấu trúc cash flow, assets, debt, liquidity, portfolio | A2 | F2 / CP1 |
+| F4 Risk Assessment | A1 + A2 | Đánh giá risk capacity/tolerance/required và risk dimensions | A3 | F3 / CP2 |
+| F5 Investment Analysis | A1+A2+A3+sources | Trích xuất và diễn giải evidence đầu tư | A4 | F4 / CP3; optional |
+| F6 Comparative Analysis | A3+A4+goal | Chuẩn hóa tiêu chí và làm rõ trade-off | A5 | F5 / CP4; optional |
+| F7 Decision Support | Approved artifacts | Tổng hợp options, goal fit, risk, trade-offs | A6 | CP trước PASS/PASS_WITH_CAVEATS |
+| F8 Validation & Release | A0–A6 + checkpoints | Red-team evidence, logic và boundary | A7 → A8 hoặc route lỗi | F7 / CP6 |
+
+F1–F4 giữ nguyên cognitive-task dependency của P0–P3. fileciteturn3file2L239-L321 fileciteturn3file2L326-L401
+
+F7 chỉ sử dụng artifact đã vượt checkpoint và phải giữ nguyên caveat, assumption và missing information. fileciteturn3file3L759-L825
+
+F8 hoạt động như independent validator và chỉ phát hành A8 sau release gate. fileciteturn3file3L848-L946
+
+### Functional gap
+
+```text
+Investment Journal
+        │
+        └── No explicit F/P/A mapping found in RTC–COE
+```
+
+**Status: PARTIAL COVERAGE — NEEDS DESIGN REVIEW**
+
+---
+
+# 6. Stakeholder Map
+
+Bài 3 yêu cầu Stakeholder decomposition xem xét kỳ vọng, nỗi sợ, nhu cầu tri thức và cách mỗi bên sử dụng AI. fileciteturn3file4L1107-L1136
+
+## S1 — End User / Financial Decision Maker — CONFIRMED
+
+Bao gồm các audience được Framing xác nhận: nhà đầu tư cá nhân, chủ doanh nghiệp nhỏ, người đã tích lũy tài sản và người muốn AI làm trợ lý tài chính. fileciteturn3file0L20-L26
+
+**Expectations**
+- Theo dõi và hiểu trạng thái tài chính.
+- Hiểu rủi ro.
+- Hiểu sản phẩm/quỹ và trade-off.
+- Có decision support nhưng vẫn tự quyết định.
+
+**Risks / Concerns**
+- Kết luận dựa trên dữ liệu thiếu.
+- Hiểu analysis thành recommendation.
+- AI vượt boundary hoặc che giấu uncertainty.
+
+**Knowledge / Information Needs**
+- L1.1–L1.7.
+
+**Interaction with AI**
+- Cung cấp A0.
+- Trả lời clarification.
+- Nhận A8.
+- Giữ quyền quyết định cuối cùng.
+
+**Relevant Functions**
+- F1–F8.
+
+---
+
+## S2 — Licensed Financial / Investment Professional — BOUNDARY STAKEHOLDER
+
+**Status:** Source-supported as escalation/boundary role, không phải primary audience.
+
+Framing và RTC–COE đều quy định AI không thay thế chuyên gia tư vấn đầu tư có giấy phép. P6 còn yêu cầu chỉ ra trường hợp nào cần licensed professional input. fileciteturn3file0L41-L43 fileciteturn3file3L794-L808
+
+**Expectations**
+- AI không vượt phạm vi decision support.
+- Case cần chuyên gia phải được nhận diện.
+
+**Risks / Concerns**
+- Recommendation-like language.
+- Người dùng hiểu AI là tư vấn được cấp phép.
+
+**Knowledge / Information Needs**
+- Goal/context.
+- Evidence chain.
+- Risk findings.
+- Missing data.
+- Boundary conditions.
+
+**Interaction with AI**
+- Escalation / professional-input boundary.
+
+**Relevant Domain Nodes**
+- L1.1, L1.6, L1.7.
+
+**Relevant Functions**
+- F7, F8.
+
+---
+
+## S3 — Knowledge / Operations Governance — PROPOSED — REQUIRES VALIDATION
+
+`Chatbot_DecomV1` đưa người vận hành và đội nội dung vào stakeholder model cho chatbot, nhưng Bài 1–2 chưa xác nhận project hiện tại có role cụ thể này. fileciteturn3file1L79-L93
+
+**Expectations**
+- Knowledge và source có thể kiểm tra.
+- Boundary được duy trì.
+- Missing/stale/conflicting information được nhìn thấy.
+
+**Risks / Concerns**
+- Nguồn cũ hoặc không truy xuất được.
+- Caveat bị mất khi handoff.
+- Requirement ngoài scope được thêm âm thầm.
+
+**Knowledge / Information Needs**
+- L1.5.
+- L1.7.
+
+**Interaction with AI**
+- Source/evidence governance.
+- Quality review.
+
+**Relevant Functions**
+- F5–F8.
+
+---
+
+## S4 — Technical Implementation Team — PROPOSED — REQUIRES VALIDATION
+
+Role này xuất phát từ framework `Chatbot_DecomV1`, chưa được Framing xác nhận là stakeholder project. fileciteturn3file1L83-L93
+
+**Expectations**
+- Dependency P0–P7 rõ.
+- Artifact schema rõ.
+- Router/checkpoint implement được.
+
+**Risks / Concerns**
+- Task chạy sai dependency.
+- Artifact chưa PASS được truyền tiếp.
+- State/caveat bị mất giữa hai task.
+
+**Knowledge / Information Needs**
+- Functional Map.
+- Artifact contract.
+- Checkpoint/router logic.
+- Boundary rules.
+
+**Interaction with AI**
+- Implementation/testing/integration.
+
+**Relevant Functions**
+- F1–F8.
+
+---
+
+# 7. Decomposition Cross-Map
+
+| Domain Node | Relevant Function | Stakeholder | Source Requirement | Priority |
+|---|---|---|---|---|
+| L1.1 Financial Context | F1–F2 | S1 | Financial coaching / decision support | Core |
+| L1.2 Cash Flow & Liquidity | F3–F4 | S1 | Cash flow tracking | Core |
+| L1.3 Assets & Liabilities | F3–F4 | S1 | Asset tracking / debt management | Core |
+| L1.4 Portfolio | F3, F5, F7 | S1 | Portfolio management | Core |
+| L1.4 Asset Allocation | F3, F4, F7 | S1 | Asset allocation | Core |
+| L1.4 Investment Journal | **No explicit mapping** | S1 | Framing In-Scope | **Core — GAP** |
+| L1.5 Fund Intelligence | F5 | S1, S3 | Read/understand fund reports | Core |
+| L1.5 Comparative Analysis | F6 | S1 | Compare funds/options | Supporting / conditional |
+| L1.6 Risk Assessment | F4 | S1 | Risk assessment | Core |
+| L1.6 Goal Feasibility | F4, F7 | S1 | Decision support | Core |
+| L1.7 Evidence Provenance | F1–F8 | S1, S3 | User/official sources only | Core |
+| L1.7 Uncertainty | F1–F8 | S1 | Missing/assumption/confidence | Core |
+| L1.7 Decision Boundary | F7–F8 | S1, S2 | Do not replace user/professional | Core |
+| L1.7 Release Validation | F8 | S1, S3, S4 | P7 validation | Core |
+
+---
+
+# 8. Traceability Matrix
+
+| Requirement gốc | Source | Domain Node | Function | Stakeholder | Coverage |
+|---|---|---|---|---|---|
+| Quản lý dòng tiền | Framing | L1.2 | F3 | S1 | FULL |
+| Theo dõi tài sản | Framing | L1.3 | F3 | S1 | FULL |
+| Quản lý danh mục | Framing | L1.4 | F3/F5 | S1 | FULL |
+| Đọc và hiểu báo cáo quỹ | Framing | L1.5 | F5 | S1 | FULL |
+| So sánh quỹ mở | Framing | L1.5 | F6 | S1 | FULL |
+| Hỗ trợ quyết định đầu tư | Framing | L1.1/L1.6/L1.7 | F7/F8 | S1 | FULL |
+| Personal Finance | Framing | L1.1–L1.4 | F2–F4 | S1 | FULL — umbrella |
+| Investment Journal | Framing | L1.4 | **MISSING explicit function** | S1 | **PARTIAL** |
+| Debt management | Framing | L1.3/L1.6 | F3/F4 | S1 | FULL |
+| Risk assessment | Framing | L1.6 | F4 | S1 | FULL |
+| Asset allocation | Framing | L1.4/L1.6 | F3/F4/F7 | S1 | FULL |
+| Chỉ dùng user data / official sources | Framing + RTC | L1.7 | F1–F8 | S1/S3 | FULL |
+| Không dự đoán giá | Out-of-Scope | L1.7 | F5/F7/F8 boundary | S1 | FULL — EXCLUDED |
+| Không cam kết lợi nhuận | Out-of-Scope | L1.7 | F5/F7/F8 boundary | S1 | FULL — EXCLUDED |
+| Không tạo short-term signal | Out-of-Scope | L1.7 | F5/F7/F8 boundary | S1 | FULL — EXCLUDED |
+| Không tư vấn pháp lý/thuế chuyên sâu | Out-of-Scope | L1.7 | Boundary | S1/S2 | FULL — EXCLUDED |
+| Không thay thế quyết định/chuyên gia | Constraint | L1.7 | F7/F8 | S1/S2 | FULL |
+| Nhiều artifact | Framing | Functional architecture | A1–A8 | S1/S4 | FULL |
+
+RTC–COE Bài 2 cũng đã có traceability từ phần lớn requirement Framing sang P1–P7 và A1–A8; `Investment Journal` là điểm nổi bật chưa được đưa vào bảng đó. fileciteturn1file5L435-L449
+
+---
+
+# 9. Gaps / Overlaps / Conflicts
+
+| ID | Type | Finding | Treatment |
+|---|---|---|---|
+| G01 | Gap | Investment Journal có trong Framing nhưng không có cognitive workflow rõ trong RTC–COE | Giữ node; coverage PARTIAL; không tự tạo P/A mới |
+| G02 | Overlap | `Cash flow tracking` và `CashFlow` lặp trong Framing | Normalize thành một requirement |
+| G03 | Overlap | `Personal Finance` rộng và bao phủ nhiều capability cụ thể | Dùng như umbrella, không tạo nhánh capability trùng |
+| G04 | Missing information | Framing không có Context field riêng | Không tự bịa; dùng Problem/Audience làm context tối thiểu |
+| G05 | Stakeholder gap | Operator/content/technical team chưa được xác nhận trong project | Gắn `PROPOSED — REQUIRES VALIDATION` |
+| G06 | Differentiation gap | Framing liệt kê nhiều nhóm người dùng nhưng chưa cho biết workflow/needs khác nhau giữa từng nhóm | Không phát minh persona-specific flow |
+| G07 | No major conflict | Các boundary chính của Framing và RTC–COE nhất quán | Preserve |
+
+Không phát hiện conflict nghiêm trọng giữa Bài 1 và Bài 2 làm thay đổi intent của project.
+
+---
+
+# 10. Recommended Priority
+
+## Core
+
+- Financial Situation & Decision Context.
+- Cash Flow & Liquidity.
+- Assets & Liabilities.
+- Portfolio & Asset Allocation.
+- Risk & Goal Feasibility.
+- Investment/Fund Analysis.
+- Evidence / uncertainty / boundary.
+- F1 → F4 → F7 → F8.
+- F5 khi use case có investment analysis.
+- **Investment Journal vẫn là Core requirement do nằm trong In-Scope, nhưng hiện là design gap và chưa đủ căn cứ để implementation.**
+
+## Supporting
+
+- Comparative Analysis / F6 khi người dùng thực sự cần so sánh.
+- Source governance.
+- Confidence/sensitivity.
+- Stakeholder governance.
+- Technical router/checkpoint implementation.
+
+## Optional / Later
+
+Không có requirement In-Scope nào được tùy tiện hạ xuống Optional.
+
+Các role S3/S4 có thể để later **nếu project chưa xác nhận governance/implementation stakeholders**, vì chúng hiện mang trạng thái `PROPOSED`.
+
+---
+
+# 11. Self-Evaluation
+
+| Criterion | Score | Nhận xét |
+|---|---:|---|
+| Level-1 Logic | 5/5 | 7 nhánh cùng là knowledge domain |
+| Breadth / Coverage | 5/5 | Bao phủ gần toàn bộ Framing + RTC |
+| Level 2–3 Clarity | 5/5 | Node có thể chuyển tiếp sang knowledge architecture |
+| Functional Usability | 5/5 | Trace trực tiếp P0–P7/A1–A8 |
+| Stakeholder Relevance | 4/5 | Primary stakeholder rõ; governance stakeholders chưa được project xác nhận |
+| Traceability | 4/5 | Investment Journal mới PARTIAL |
+| Clarity / Buildability | 5/5 | Domain/Function/Stakeholder được tách rõ |
+
+**Total: 33/35**
+
+Theo rubric của Instruction: `30–35 = READY FOR NEXT STAGE`.
+
+Tuy nhiên điểm số **không được che gap về requirement**, vì vậy release status không được đặt PASS tuyệt đối.
+
+### Quality checks
+
+**Criteria Check:** PASS  
+Tree có 3–4 tầng khi cần; Level 1 đồng dạng; workflow input→output rõ.
+
+**Gap Check:** PASS_WITH_CAVEATS  
+Investment Journal chưa có functional coverage.
+
+**Contradiction Check:** PASS  
+Không có contradiction lớn giữa framing, workflow và boundaries.
+
+**Overlap / MECE-ish Check:** PASS  
+CashFlow duplicate và Personal Finance umbrella đã được normalize.
+
+---
+
+# 12. Decomposition Checkpoint
+
+```yaml
+checkpoint_id: CP_DECOM
+artifact: Decomposition Package
+
+status: PASS_WITH_CAVEATS
+
+pass_criteria:
+  framing_traceable: true
+  rtc_coe_traceable: true
+  level_1_consistent: true
+  major_overlap_resolved: true
+  functional_flow_complete: true
+  stakeholder_map_useful: true
+  in_scope_coverage_complete: false
+  out_of_scope_preserved: true
+
+critical_issues: []
+
+assumptions_carried_forward:
+  - "Cash flow tracking và CashFlow được normalize thành cùng một requirement."
+  - "Personal Finance được dùng như umbrella domain thay vì capability độc lập."
+  - "Không suy diễn thêm chức năng cho Investment Journal."
+
+missing_information:
+  - "Expected behavior và artifact/workflow của Investment Journal."
+  - "Sự khác biệt về nhu cầu/workflow giữa các audience segment."
+  - "Project có thực sự có operator/content governance/technical stakeholder riêng hay không."
+
+confidence: HIGH
+
+route:
+  PASS: READY_FOR_INFORMATION_ARCHITECTURE
+  PASS_WITH_CAVEATS: READY_WITH_CAVEATS
+  NEEDS_INPUT: ASK_USER
+  REVISE: REBUILD_DECOMPOSITION
+  BLOCK: STOP
+
+current_route: READY_WITH_CAVEATS
+```
+
+## Kết luận checkpoint
+
+**Decomposition Bài 3 hiện đủ mạnh để đi tiếp sang Information / Knowledge Architecture mà không làm thay đổi Problem gốc của Bài 1 và không biến Prompt Stack Bài 2 thành Domain Tree.**
+
+Điểm duy nhất cần carry forward bắt buộc là:
+
+**`Investment Journal = IN-SCOPE nhưng FUNCTIONAL COVERAGE = PARTIAL`.**
+
+Không được tự giải quyết gap này bằng cách thêm prompt, artifact hoặc capability mới nếu chưa qua validation.
